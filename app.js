@@ -14,7 +14,8 @@ let collection;
 
 MongoClient.connect(URL, {
     useNewUrlParser: true,
-    useUnifiedTopology: true
+    useUnifiedTopology: true,
+    ssl: true 
 }).then(client => {
     console.log("Connected to MongoDB");
     const db = client.db(DB_NAME);
