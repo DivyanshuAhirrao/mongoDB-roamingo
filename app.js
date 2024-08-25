@@ -4,7 +4,7 @@ const { MongoClient } = require('mongodb');
 const app = express();
 const port = process.env.PORT || 3000;
 
-const URL = process.env.MONGO_URL;
+const URL = 'mongodb+srv://DivyanshuAhirrao:Dadu%401699@roamingo.jodfp.mongodb.net/Roamingo?retryWrites=true&w=majority';
 const DB_NAME = 'Roamingo';
 const DB_COLLECTION_BUS = 'Bus';
 
@@ -13,8 +13,6 @@ app.use(express.json());
 let collection;
 
 MongoClient.connect(URL, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
     ssl: true 
 }).then(client => {
     console.log("Connected to MongoDB");
