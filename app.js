@@ -4,26 +4,31 @@ const { MongoClient } = require('mongodb');
 const app = express();
 const port = process.env.PORT || 3000;
 
-const URL = 'mongodb+srv://DivyanshuAhirrao:Dadu%401699@roamingo.jodfp.mongodb.net/Roamingo?retryWrites=true&w=majority';
+const URL = process.env.MONGO_URL;
 const DB_NAME = 'Roamingo';
 const DB_COLLECTION_BUS = 'Bus';
 
 app.use(express.json());
 
-let db, collection;
+let collection;
 
-// Connection with MongoDB
 MongoClient.connect(URL, {
     useNewUrlParser: true,
     useUnifiedTopology: true
 }).then(client => {
     console.log("Connected to MongoDB");
-    db = client.db(DB_NAME);
+    const db = client.db(DB_NAME);
     collection = db.collection(DB_COLLECTION_BUS);
-}).catch(err => console.error("Failed to connect to MongoDB", err));
+}).catch(err => {
+    console.error("Failed to connect to MongoDB", err);
+    process.exit(1); // Exit if connection fails
+});
 
 app.get('/buses', async (req, res) => {
     try {
+        if (!collection) {
+            throw new Error("Database connection not established");
+        }
         const buses = await collection.find({}).toArray();
         res.json(buses);
     } catch (err) {
@@ -33,11 +38,14 @@ app.get('/buses', async (req, res) => {
 
 app.post('/buses', async (req, res) => {
     try {
+        if (!collection) {
+            throw new Error("Database connection not established");
+        }
         const newBus = req.body;
         const result = await collection.insertOne(newBus);
-        res.status(200 || 201).json(result);
+        res.status(201).json(result);
     } catch (err) {
-        res.status(500).send("Error creating buses: " + err);
+        res.status(500).send("Error creating bus: " + err);
     }
 });
 
